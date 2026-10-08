@@ -1,0 +1,22 @@
+{
+    "KPackageStructure": "Plasma/Applet",
+    "KPlugin": {
+        "Authors": [
+            {
+                "Name": "berkkucukk",
+                "Email": "berkkucukk@proton.me"
+            }
+        ],
+        "Category": "System Information",
+        "Description": "Plan limits and usage for AI coding agents: Claude, Codex, Gemini CLI, GitHub Copilot and OpenCode",
+        "Description[tr]": "Yapay zekâ kodlama ajanlarının plan limitleri ve kullanımı: Claude, Codex, Gemini CLI, GitHub Copilot ve OpenCode",
+        "Icon": "ai-usage",
+        "Id": "com.github.berkkucukk.aiusage",
+        "License": "GPL-3.0-or-later",
+        "Name": "AI Usage",
+        "Name[tr]": "Yapay Zekâ Kullanımı",
+        "Version": "2.0.0",
+        "Website": ""
+    },
+    "X-Plasma-API-Minimum-Version": "6.0"
+}

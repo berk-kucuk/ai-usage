@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kcfg xmlns="http://www.kde.org/standards/kcfg/1.0"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.kde.org/standards/kcfg/1.0 http://www.kde.org/standards/kcfg/1.0/kcfg.xsd">
+  <kcfgfile name=""/>
+  <group name="General">
+    <entry name="theme" type="Int">
+      <default>0</default>
+    </entry>
+    <entry name="refreshSeconds" type="Int">
+      <default>60</default>
+      <min>15</min>
+      <max>3600</max>
+    </entry>
+    <entry name="hiddenProviders" type="String">
+      <default></default>
+    </entry>
+    <entry name="panelKinds" type="String">
+      <default>session,weekly</default>
+    </entry>
+    <entry name="panelMaxPerProvider" type="Int">
+      <default>2</default>
+      <min>1</min>
+      <max>3</max>
+    </entry>
+    <entry name="showTokenOnlyProviders" type="Bool">
+      <default>true</default>
+    </entry>
+    <entry name="panelSegments" type="Int">
+      <default>8</default>
+      <min>3</min>
+      <max>20</max>
+    </entry>
+    <entry name="panelLayout" type="Int">
+      <default>0</default>
+    </entry>
+    <entry name="showIcon" type="Bool">
+      <default>true</default>
+    </entry>
+    <entry name="showPercent" type="Bool">
+      <default>true</default>
+    </entry>
+    <entry name="displayRemaining" type="Bool">
+      <default>false</default>
+    </entry>
+  </group>
+</kcfg>
