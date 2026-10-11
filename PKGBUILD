@@ -4,7 +4,7 @@
 
 pkgname=plasma6-applets-ai-usage
 _appletid=com.github.berkkucukk.aiusage
-pkgver=2.0.0
+pkgver=2.0.1
 pkgrel=1
 pkgdesc="KDE Plasma 6 widget showing plan limits for AI coding agents (Claude, Codex, Gemini CLI, Copilot, OpenCode)"
 arch=('any')
@@ -20,7 +20,9 @@ package() {
     local dest="$pkgdir/usr/share/plasma/plasmoids/$_appletid"
 
     install -Dm644 "$src/metadata.json" "$dest/metadata.json"
-    find "$src/contents" -type f | while read -r f; do
+    # Python bytecode is a by-product of running the collector from the
+    # checkout, not part of the widget: it made two builds of one version differ.
+    find "$src/contents" -type f -not -path '*/__pycache__/*' -not -name '*.pyc' | while read -r f; do
         install -Dm644 "$f" "$dest/${f#"$src/"}"
     done
     chmod 755 "$dest/contents/code/collector.py"
