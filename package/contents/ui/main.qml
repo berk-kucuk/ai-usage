@@ -55,7 +55,13 @@ PlasmoidItem {
     }
 
     readonly property string collectorPath: decodeURIComponent(Qt.resolvedUrl("../code/collector.py").toString().replace(/^file:\/\//, ""))
+    // Unticked agents are passed on as --skip: the collector then does not
+    // read their login tokens at all. Ids are checked against a fixed set, so
+    // nothing from the config reaches the shell unvetted.
+    readonly property var knownProviders: ["claude", "codex", "gemini", "copilot", "opencode"]
+    readonly property string skipArg: hiddenProviders.filter(id => knownProviders.indexOf(id) !== -1).join(",")
     readonly property string collectorCommand: "python3 '" + collectorPath.replace(/'/g, "'\\''") + "'"
+                                               + (skipArg ? " --skip " + skipArg : "")
 
     function shownValue(limit) {
         return showRemaining ? 100 - limit.used : limit.used

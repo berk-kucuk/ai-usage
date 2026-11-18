@@ -37,6 +37,7 @@ import glob
 import json
 import os
 import sqlite3
+import shlex
 import subprocess
 import sys
 import time
@@ -560,7 +561,11 @@ def codex_scan_sessions():
             continue
         if last_total:
             base_tot = before_midnight_total or {}
-            d = lambda k: max(0, int(last_total.get(k) or 0) - int(base_tot.get(k) or 0))
+
+            def d(k, last=last_total, base=base_tot):
+                # Today's share of this session: its total now minus its total
+                # at midnight. Bound explicitly, not read from the loop later.
+                return max(0, int(last.get(k) or 0) - int(base.get(k) or 0))
             cached = d("cached_input_tokens")
             tokens["input"] += max(0, d("input_tokens") - cached)
             tokens["cache_read"] += cached
@@ -631,9 +636,9 @@ def provider_codex():
                 p["extra"] = {"label": "Credits", "text": str(credits.get("balance"))}
 
     try:
-        lims, ts, plan, tokens, has_logs = codex_scan_sessions()
+        lims, ts, plan, tokens, _has_logs = codex_scan_sessions()
     except Exception:
-        lims, ts, plan, tokens, has_logs = [], None, None, None, False
+        lims, ts, plan, tokens = [], None, None, None
     if lims and (not p["limits"] or (ts or 0) > (p["updated_at"] or 0)):
         p.update({"limits": lims, "source": "local", "updated_at": ts})
     if plan and not p["plan"]:
@@ -876,11 +881,19 @@ def provider_opencode():
 # --------------------------------------------------------------------------
 
 PROVIDERS = [provider_claude, provider_codex, provider_gemini, provider_copilot, provider_opencode]
+PROVIDER_IDS = {"claude": provider_claude, "codex": provider_codex, "gemini": provider_gemini,
+                "copilot": provider_copilot, "opencode": provider_opencode}
 
 
-def collect():
+def collect(skip=()):
+    """`skip`: provider ids switched off in the widget's settings. Those are
+    not run at all — their login tokens are never opened and nothing is sent
+    to their usage API (unticking one used to hide it from view only)."""
     providers = []
+    skipped = {PROVIDER_IDS[i] for i in skip if i in PROVIDER_IDS}
     for fn in PROVIDERS:
+        if fn in skipped:
+            continue
         try:
             p = fn()
         except Exception as e:  # one broken provider must never hide the others
@@ -942,7 +955,10 @@ def tap(argv):
     if argv and argv[0] == "--":
         argv = argv[1:]
     if argv:
-        cmd = argv[0] if len(argv) == 1 else subprocess.list2cmdline(argv)
+        # One argument is the user's own statusline command line, as Claude Code
+        # stores it; several are an argv, quoted the POSIX way (list2cmdline
+        # follows Windows' rules and broke quoting here).
+        cmd = argv[0] if len(argv) == 1 else shlex.join(argv)
         res = subprocess.run(cmd, shell=True, input=raw, text=True, capture_output=True)
         sys.stdout.write(res.stdout)
         return res.returncode
@@ -955,8 +971,11 @@ def main():
         return
     if len(sys.argv) > 1 and sys.argv[1] == "tap":
         sys.exit(tap(sys.argv[2:]))
+    skip = ()
+    if len(sys.argv) > 2 and sys.argv[1] == "--skip":
+        skip = tuple(s for s in sys.argv[2].split(",") if s)
     try:
-        out = collect()
+        out = collect(skip)
     except Exception as e:
         out = {"version": 2, "generated_at": now_ms(), "providers": [], "error": str(e)}
     sys.stdout.write(json.dumps(out, separators=(",", ":")) + "\n")

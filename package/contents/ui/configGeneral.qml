@@ -72,6 +72,14 @@ KCM.SimpleKCM {
             }
         }
 
+        QQC2.Label {
+            Layout.fillWidth: true
+            wrapMode: Text.Wrap
+            font: Kirigami.Theme.smallFont
+            opacity: 0.75
+            text: i18n("Each ticked agent's login token is read to ask its own service for your usage. Unticked agents are not read at all.")
+        }
+
         QQC2.CheckBox {
             id: showTokenOnly
             text: i18n("Show token totals for agents without plan limits")

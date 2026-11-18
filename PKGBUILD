@@ -5,7 +5,7 @@
 pkgname=plasma6-applets-ai-usage
 _appletid=com.github.berkkucukk.aiusage
 pkgver=2.0.1
-pkgrel=1
+pkgrel=2
 pkgdesc="KDE Plasma 6 widget showing plan limits for AI coding agents (Claude, Codex, Gemini CLI, Copilot, OpenCode)"
 arch=('any')
 license=('GPL-3.0-or-later')
